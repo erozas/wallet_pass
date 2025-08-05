@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  organizer: one
+  title: MyString
+  description: MyText
+  venue_name: MyString
+  venue_address: MyString
+  venue_lat: 9.99
+  venue_lng: 9.99
+  event_date: 2025-08-05 00:15:20
+  doors_open_at: 2025-08-05 00:15:20
+  ticket_price_cents: 1
+  max_capacity: 1
+  tickets_sold_count: 1
+  category: MyString
+  status: MyString
+
+two:
+  organizer: two
+  title: MyString
+  description: MyText
+  venue_name: MyString
+  venue_address: MyString
+  venue_lat: 9.99
+  venue_lng: 9.99
+  event_date: 2025-08-05 00:15:20
+  doors_open_at: 2025-08-05 00:15:20
+  ticket_price_cents: 1
+  max_capacity: 1
+  tickets_sold_count: 1
+  category: MyString
+  status: MyString
