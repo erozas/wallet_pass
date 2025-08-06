@@ -65,3 +65,4 @@ group :test do
 end
 
 gem "figaro", "~> 1.3"
+gem "passkit"

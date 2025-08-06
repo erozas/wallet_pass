@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_041520) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_06_023010) do
   create_table "events", force: :cascade do |t|
     t.integer "organizer_id", null: false
     t.string "title", null: false
@@ -44,6 +44,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_041520) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_organizers_on_email", unique: true
+  end
+
+  create_table "passkit_devices", force: :cascade do |t|
+    t.string "identifier"
+    t.string "push_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "passkit_logs", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "passkit_passes", force: :cascade do |t|
+    t.string "generator_type"
+    t.string "klass"
+    t.bigint "generator_id"
+    t.string "serial_number"
+    t.string "authentication_token"
+    t.json "data"
+    t.integer "version"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["generator_type", "generator_id"], name: "index_passkit_passes_on_generator"
+  end
+
+  create_table "passkit_registrations", force: :cascade do |t|
+    t.integer "passkit_pass_id"
+    t.integer "passkit_device_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["passkit_device_id"], name: "index_passkit_registrations_on_passkit_device_id"
+    t.index ["passkit_pass_id"], name: "index_passkit_registrations_on_passkit_pass_id"
   end
 
   add_foreign_key "events", "organizers"

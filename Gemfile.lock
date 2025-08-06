@@ -195,6 +195,9 @@ GEM
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
+    passkit (0.7.0)
+      rails (>= 5)
+      rubyzip (~> 2.0)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -381,6 +384,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   kamal
+  passkit
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.2)
