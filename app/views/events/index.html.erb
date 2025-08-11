@@ -1,3 +1,55 @@
+<% if params[:search].present? %>
+  <% content_for :title, "#{params[:search].titleize} Events - PassPort" %>
+  <% content_for :description, "Find #{params[:search]} events happening near you. Get tickets instantly delivered to Apple Wallet. Browse concerts, workshops, conferences and more." %>
+  <% content_for :keywords, "#{params[:search]} events, #{params[:search]} tickets, events near me, digital tickets, Apple Wallet" %>
+<% elsif params[:date].present? %>
+  <% formatted_date = Date.parse(params[:date]).strftime("%B %d, %Y") rescue params[:date] %>
+  <% content_for :title, "Events on #{formatted_date} - PassPort" %>
+  <% content_for :description, "Find events happening on #{formatted_date}. Get tickets instantly delivered to Apple Wallet." %>
+<% else %>
+  <% content_for :title, "Upcoming Events - PassPort" %>
+  <% content_for :description, "Discover amazing events happening near you. From concerts to conferences, find your next experience and get Apple Wallet tickets instantly." %>
+  <% content_for :keywords, "upcoming events, events near me, concerts, workshops, conferences, digital tickets, Apple Wallet tickets, live events" %>
+<% end %>
+
+<% content_for :structured_data do %>
+  <% if @events.any? %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "<%= params[:search].present? ? "#{params[:search].titleize} Events" : "Upcoming Events" %>",
+      "description": "Events available for booking with Apple Wallet tickets",
+      "itemListElement": [
+        <% @events.limit(20).each_with_index do |event, index| %>
+          {
+            "@type": "ListItem",
+            "position": <%= index + 1 %>,
+            "item": {
+              "@type": "Event",
+              "name": "<%= j event.title %>",
+              "description": "<%= j truncate(event.description, length: 160) if event.description.present? %>",
+              "startDate": "<%= event.event_date.iso8601 %>",
+              "eventStatus": "https://schema.org/EventScheduled",
+              "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+              "location": {
+                "@type": "Place",
+                "name": "<%= j event.venue_name %>"<%= ", \"address\": \"#{j event.venue_address}\"" if event.venue_address.present? %>
+              },
+              "organizer": {
+                "@type": "Organization",
+                "name": "<%= j event.organizer.company_name %>"
+              },
+              "url": "<%= event_url(event) %>"<%= event.ticket_price_cents.present? ? ", \"offers\": { \"@type\": \"Offer\", \"price\": \"#{event.ticket_price_cents / 100.0}\", \"priceCurrency\": \"USD\", \"availability\": \"https://schema.org/InStock\" }" : "" %>
+            }
+          }<%= "," unless index == [@events.limit(20).count - 1, 19].min %>
+        <% end %>
+      ]
+    }
+    </script>
+  <% end %>
+<% end %>
+
 <div class="bg-gray-50 min-h-screen py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header Section -->
@@ -149,7 +201,7 @@
                     <% elsif event.available_tickets %>
                       <%= pluralize(event.available_tickets, 'ticket') %> left
                     <% else %>
-                      <%= pluralize(event.tickets_sold_count, 'ticket') %> sold
+                      <%= pluralize(event.actual_tickets_sold, 'ticket') %> sold
                     <% end %>
                   </div>
                 </div>

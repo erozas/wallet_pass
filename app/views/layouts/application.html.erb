@@ -1,14 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Wallet Pass" %></title>
+    <!-- Basic SEO Meta Tags -->
+    <title><%= content_for(:title) || "PassPort - Find Amazing Events & Get Apple Wallet Tickets" %></title>
+    <meta name="description" content="<%= content_for(:description) || "Discover concerts, workshops, conferences and more. Get your tickets instantly delivered to Apple Wallet. Find amazing events happening near you." %>">
+    <meta name="keywords" content="<%= content_for(:keywords) || "events, tickets, concerts, workshops, conferences, Apple Wallet, digital tickets, event discovery" %>">
+    <meta name="author" content="PassPort Events">
+    <meta name="robots" content="index, follow">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="<%= content_for(:og_title) || content_for(:title) || "PassPort - Find Amazing Events & Get Apple Wallet Tickets" %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || content_for(:description) || "Discover concerts, workshops, conferences and more. Get your tickets instantly delivered to Apple Wallet." %>">
+    <% if content_for(:og_image).present? %>
+    <meta property="og:image" content="<%= content_for(:og_image) %>">
+    <% end %>
+    <meta property="og:url" content="<%= content_for(:og_url) || request.original_url %>">
+    <meta property="og:type" content="<%= content_for(:og_type) || "website" %>">
+    <meta property="og:site_name" content="PassPort Events">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:twitter_title) || content_for(:og_title) || content_for(:title) || "PassPort - Find Amazing Events" %>">
+    <meta name="twitter:description" content="<%= content_for(:twitter_description) || content_for(:og_description) || content_for(:description) || "Discover amazing events and get Apple Wallet tickets instantly." %>">
+    <% if content_for(:twitter_image).present? || content_for(:og_image).present? %>
+    <meta name="twitter:image" content="<%= content_for(:twitter_image) || content_for(:og_image) %>">
+    <% end %>
+    
+    <!-- Apple Mobile Web App -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PassPort Events">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<%= content_for(:canonical_url) || request.original_url %>">
+    
+    <!-- Security and Performance -->
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
+    
+    <!-- Structured Data -->
+    <%= yield :structured_data %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>

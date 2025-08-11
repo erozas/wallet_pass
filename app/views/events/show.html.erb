@@ -1,3 +1,54 @@
+<% content_for :title, "#{@event.title} - #{@event.event_date.strftime('%B %d, %Y')} | PassPort" %>
+<% content_for :description, "#{@event.description.present? ? truncate(@event.description, length: 160) : "Join us for #{@event.title} on #{@event.event_date.strftime('%B %d, %Y')}"} Get your Apple Wallet tickets instantly." %>
+<% content_for :keywords, "#{@event.title}, #{@event.category} event, #{@event.venue_name}, #{@event.event_date.strftime('%B %Y')} events, Apple Wallet tickets, #{@event.organizer.company_name}" %>
+
+<% content_for :og_title, "#{@event.title} - #{@event.event_date.strftime('%B %d, %Y')}" %>
+<% content_for :og_description, @event.description.present? ? truncate(@event.description, length: 160) : "Join us for #{@event.title}. Get your Apple Wallet tickets instantly." %>
+<% content_for :og_type, "event" %>
+<% if @event.cover.attached? %>
+  <% content_for :og_image, url_for(@event.cover) %>
+<% end %>
+
+<% content_for :structured_data do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "<%= j @event.title %>",
+    "description": "<%= j @event.description if @event.description.present? %>",
+    "startDate": "<%= @event.event_date.iso8601 %>",
+    "endDate": "<%= (@event.event_date + 3.hours).iso8601 %>",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": "<%= j @event.venue_name %>"<%= ", \"address\": \"#{j @event.venue_address}\"" if @event.venue_address.present? %>
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "<%= j @event.organizer.company_name %>"<%= ", \"description\": \"#{j @event.organizer.description}\"" if @event.organizer.description.present? %>
+    },
+    "url": "<%= event_url(@event) %>",
+    <% if @event.cover.attached? %>
+    "image": "<%= url_for(@event.cover) %>",
+    <% end %>
+    <% if @event.ticket_price_cents.present? %>
+    "offers": {
+      "@type": "Offer",
+      "price": "<%= @event.ticket_price_cents / 100.0 %>",
+      "priceCurrency": "USD",
+      "availability": "<%= @event.sold_out? ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' %>",
+      "url": "<%= event_url(@event) %>"
+    },
+    <% end %>
+    "performer": {
+      "@type": "Organization",
+      "name": "<%= j @event.organizer.company_name %>"
+    }
+  }
+  </script>
+<% end %>
+
 <div class="bg-gray-50 min-h-screen">
   <!-- Hero Section with Cover Image -->
   <div class="relative bg-gray-800">
@@ -176,7 +227,7 @@
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-600">Sold:</span>
-                    <span class="font-medium"><%= number_with_delimiter(@event.tickets_sold_count) %></span>
+                    <span class="font-medium"><%= number_with_delimiter(@event.actual_tickets_sold) %></span>
                   </div>
                   <% if @event.available_tickets %>
                     <div class="flex justify-between text-sm">
@@ -188,10 +239,10 @@
                   <!-- Progress bar -->
                   <div class="mt-3">
                     <div class="bg-gray-200 rounded-full h-2">
-                      <div class="bg-blue-500 h-2 rounded-full" style="width: <%= (@event.tickets_sold_count.to_f / @event.max_capacity * 100).round(1) %>%"></div>
+                      <div class="bg-blue-500 h-2 rounded-full" style="width: <%= (@event.actual_tickets_sold.to_f / @event.max_capacity * 100).round(1) %>%"></div>
                     </div>
                     <div class="text-xs text-gray-500 mt-1">
-                      <%= (@event.tickets_sold_count.to_f / @event.max_capacity * 100).round(1) %>% sold
+                      <%= (@event.actual_tickets_sold.to_f / @event.max_capacity * 100).round(1) %>% sold
                     </div>
                   </div>
                 </div>
@@ -211,7 +262,7 @@
                       controller: "ticket-purchase",
                       ticket_purchase_ticket_price_value: @event.ticket_price_cents || 0,
                       ticket_purchase_max_capacity_value: @event.max_capacity || 999999,
-                      ticket_purchase_tickets_sold_value: @event.tickets_sold_count
+                      ticket_purchase_tickets_sold_value: @event.actual_tickets_sold
                     },
                     class: "space-y-4" do |form| %>
                   

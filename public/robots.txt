@@ -1,1 +1,31 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+User-agent: *
+Allow: /
+Allow: /events
+Allow: /events/*
+
+# Allow crawling of static assets
+Allow: /assets/
+Allow: /images/
+Allow: /stylesheets/
+Allow: /javascripts/
+
+# Disallow admin areas
+Disallow: /admin
+Disallow: /avo
+Disallow: /tickets
+
+# Disallow authentication pages
+Disallow: /session
+Disallow: /registration
+Disallow: /passwords
+
+# Disallow search results with sensitive parameters
+Disallow: /*?*ticket*
+Disallow: /*?*token*
+Disallow: /*?*session*
+
+# Sitemap location
+Sitemap: https://passport-events.com/sitemap.xml
+
+# Crawl-delay to be respectful
+Crawl-delay: 1
