@@ -7,6 +7,7 @@ class Avo::Resources::Event < Avo::BaseResource
   def fields
     field :id, as: :id
     field :title, as: :text, required: true
+    field :slug, as: :text, readonly: true, hide_on: [:new, :edit]
     field :organizer, as: :belongs_to, required: true
     field :description, as: :textarea
     field :cover, as: :file, is_image: true, accept: "image/*"

@@ -228,18 +228,6 @@
               </p>
             <% end %>
             
-            <div class="flex space-x-3 text-sm">
-              <% if @event.organizer.website.present? %>
-                <a href="<%= @event.organizer.website %>" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium">
-                  Website
-                </a>
-              <% end %>
-              <% if @event.organizer.email.present? %>
-                <a href="mailto:<%= @event.organizer.email %>" class="text-blue-600 hover:text-blue-800 font-medium">
-                  Contact
-                </a>
-              <% end %>
-            </div>
           </div>
         </div>
       </div>

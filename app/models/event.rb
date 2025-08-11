@@ -8,6 +8,7 @@
 #  doors_open_at      :datetime
 #  event_date         :datetime
 #  max_capacity       :integer
+#  slug               :string
 #  status             :string
 #  ticket_price_cents :integer
 #  tickets_sold_count :integer          default(0)
@@ -24,6 +25,7 @@
 #
 #  index_events_on_event_date               (event_date)
 #  index_events_on_organizer_id             (organizer_id)
+#  index_events_on_slug                     (slug) UNIQUE
 #  index_events_on_status                   (status)
 #  index_events_on_venue_lat_and_venue_lng  (venue_lat,venue_lng)
 #
@@ -32,6 +34,9 @@
 #  organizer_id  (organizer_id => organizers.id)
 #
 class Event < ApplicationRecord
+  extend FriendlyId
+  friendly_id :title, use: [:slugged, :history]
+
   belongs_to :organizer
   has_one_attached :cover
   
