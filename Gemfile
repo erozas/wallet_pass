@@ -67,3 +67,4 @@ end
 gem "figaro", "~> 1.3"
 gem "passkit"
 gem "avo"
+gem "breadcrumbs_on_rails"
