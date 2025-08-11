@@ -17,4 +17,9 @@
 #  index_organizers_on_email  (email) UNIQUE
 #
 class Organizer < ApplicationRecord
+  has_many :events, dependent: :destroy
+  
+  validates :name, presence: true
+  validates :email, presence: true, uniqueness: true
+  validates :company_name, presence: true
 end

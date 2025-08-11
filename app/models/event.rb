@@ -33,4 +33,26 @@
 #
 class Event < ApplicationRecord
   belongs_to :organizer
+  has_one_attached :cover
+  
+  validates :title, presence: true
+  validates :event_date, presence: true
+  validates :organizer_id, presence: true
+  
+  scope :published, -> { where(status: 'published') }
+  scope :upcoming, -> { where('event_date > ?', Time.current) }
+  
+  def formatted_price
+    return "Free" if ticket_price_cents.nil? || ticket_price_cents.zero?
+    "$#{'%.2f' % (ticket_price_cents / 100.0)}"
+  end
+  
+  def sold_out?
+    max_capacity.present? && tickets_sold_count >= max_capacity
+  end
+  
+  def available_tickets
+    return nil unless max_capacity.present?
+    max_capacity - tickets_sold_count
+  end
 end
