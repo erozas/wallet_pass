@@ -5,7 +5,28 @@ class EventsController < ApplicationController
   before_action :add_breadcrumbs
 
   def index
-    @events = Event.published.upcoming.includes(:organizer, cover_attachment: :blob).order(:event_date)
+    @events = Event.includes(:organizer, cover_attachment: :blob)
+    
+    # Apply search filter if provided
+    if params[:search].present?
+      search_term = "%#{params[:search].downcase}%"
+      @events = @events.where("LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(category) LIKE ? OR LOWER(venue_name) LIKE ?", 
+                             search_term, search_term, search_term, search_term)
+    end
+    
+    # Apply date filter if provided
+    if params[:date].present?
+      date = Date.parse(params[:date])
+      @events = @events.where(event_date: date.beginning_of_day..date.end_of_day)
+    else
+      # Only show upcoming events if no specific date is searched
+      @events = @events.where('event_date > ?', Time.current)
+    end
+    
+    @events = @events.order(:event_date)
+  rescue Date::Error
+    # Invalid date format, ignore date filter
+    @events = @events.where('event_date > ?', Time.current).order(:event_date)
   end
 
   def show

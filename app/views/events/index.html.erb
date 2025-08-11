@@ -1,12 +1,72 @@
 <div class="bg-gray-50 min-h-screen py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header Section -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4">Upcoming Events</h1>
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        <% if params[:search].present? || params[:date].present? %>
+          Search Results
+        <% else %>
+          Upcoming Events
+        <% end %>
+      </h1>
       <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-        Discover amazing events happening near you. From tech conferences to music festivals, find your next experience.
+        <% if params[:search].present? || params[:date].present? %>
+          <% results_count = @events.count %>
+          Found <%= pluralize(results_count, 'event') %>
+          <% if params[:search].present? %>
+            for "<%= params[:search] %>"
+          <% end %>
+          <% if params[:date].present? %>
+            on <%= Date.parse(params[:date]).strftime("%B %d, %Y") rescue params[:date] %>
+          <% end %>
+        <% else %>
+          Discover amazing events happening near you. From tech conferences to music festivals, find your next experience.
+        <% end %>
       </p>
     </div>
+
+    <!-- Search Filters Bar -->
+    <% if params[:search].present? || params[:date].present? %>
+      <div class="mb-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="text-sm font-medium text-gray-700">Active filters:</span>
+            
+            <% if params[:search].present? %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                Search: <%= params[:search] %>
+                <%= link_to events_path(date: params[:date]), 
+                    class: "ml-2 text-blue-600 hover:text-blue-800" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                <% end %>
+              </span>
+            <% end %>
+            
+            <% if params[:date].present? %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                Date: <%= Date.parse(params[:date]).strftime("%b %d, %Y") rescue params[:date] %>
+                <%= link_to events_path(search: params[:search]), 
+                    class: "ml-2 text-green-600 hover:text-green-800" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                <% end %>
+              </span>
+            <% end %>
+            
+            <!-- Clear All Filters -->
+            <div class="ml-auto">
+              <%= link_to events_path, 
+                  class: "text-sm text-gray-600 hover:text-gray-900 underline" do %>
+                Clear all filters
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
     <!-- Events Grid -->
     <% if @events.any? %>
