@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount_avo
   resource :session
   resource :registration, only: [:new, :create]
   resources :passwords, param: :token
