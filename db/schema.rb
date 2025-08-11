@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_065445) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_070916) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -131,6 +131,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_065445) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "tickets", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.string "ticket_number"
+    t.integer "status", default: 0
+    t.datetime "purchased_at"
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_tickets_on_event_id"
+    t.index ["user_id"], name: "index_tickets_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -143,4 +156,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_065445) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "events", "organizers"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tickets", "events"
+  add_foreign_key "tickets", "users"
 end
