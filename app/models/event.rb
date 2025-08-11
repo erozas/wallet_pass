@@ -41,6 +41,8 @@ class Event < ApplicationRecord
   has_one_attached :cover
   has_many :tickets, dependent: :destroy
   
+  scope :upcoming, -> { where('event_date > ?', Time.current).order(:event_date) }
+  
   validates :title, presence: true
   validates :event_date, presence: true
   validates :organizer_id, presence: true
