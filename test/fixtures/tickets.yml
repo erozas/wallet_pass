@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  event: one
+  ticket_number: MyString
+  status: MyString
+  purchased_at: 2025-08-11 03:01:56
+  quantity: 1
+
+two:
+  user: two
+  event: two
+  ticket_number: MyString
+  status: MyString
+  purchased_at: 2025-08-11 03:01:56
+  quantity: 1
