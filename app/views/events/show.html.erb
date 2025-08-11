@@ -1,0 +1,248 @@
+<div class="bg-gray-50 min-h-screen">
+  <!-- Hero Section with Cover Image -->
+  <div class="relative bg-gray-800">
+    <% if @event.cover.attached? %>
+      <div class="absolute inset-0">
+        <%= image_tag @event.cover, 
+            alt: @event.title,
+            class: "w-full h-full object-cover opacity-60" %>
+      </div>
+    <% end %>
+    <div class="relative bg-gradient-to-t from-gray-900/80 to-transparent">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="max-w-3xl">
+          <!-- Category Badge -->
+          <div class="mb-4">
+            <span class="inline-block bg-blue-600 bg-opacity-90 backdrop-blur-sm text-white text-sm font-medium px-3 py-1 rounded-full uppercase tracking-wide">
+              <%= @event.category&.humanize || 'Event' %>
+            </span>
+          </div>
+          
+          <!-- Event Title -->
+          <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            <%= @event.title %>
+          </h1>
+          
+          <!-- Key Event Info -->
+          <div class="flex flex-wrap gap-6 text-white">
+            <!-- Date -->
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 8h6m-6 0v2a2 2 0 002 2h4a2 2 0 002-2v-2m-6 0V9a2 2 0 012-2h4a2 2 0 012 2v6"/>
+              </svg>
+              <time datetime="<%= @event.event_date.iso8601 %>">
+                <%= @event.event_date.strftime("%A, %B %d, %Y at %l:%M %p") %>
+              </time>
+            </div>
+            
+            <!-- Location -->
+            <% if @event.venue_name.present? %>
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <%= @event.venue_name %>
+              </div>
+            <% end %>
+            
+            <!-- Price -->
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+              <%= @event.formatted_price %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breadcrumbs -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+          <% breadcrumbs.each_with_index do |breadcrumb, index| %>
+            <li class="inline-flex items-center">
+              <% if index > 0 %>
+                <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              <% end %>
+              <% if breadcrumb.path && index < breadcrumbs.size - 1 %>
+                <%= link_to breadcrumb.name, breadcrumb.path, class: "text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors duration-200" %>
+              <% else %>
+                <span class="text-gray-900 text-sm font-medium" aria-current="page">
+                  <%= truncate(breadcrumb.name, length: 50) %>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <!-- Main Content Area -->
+      <div class="lg:col-span-2">
+        <!-- Description -->
+        <div class="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">About This Event</h2>
+          <% if @event.description.present? %>
+            <div class="prose prose-gray max-w-none">
+              <%= simple_format(@event.description, class: "text-gray-700 leading-relaxed") %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">No description available for this event.</p>
+          <% end %>
+        </div>
+
+        <!-- Venue Information -->
+        <% if @event.venue_name.present? || @event.venue_address.present? %>
+          <div class="bg-white border border-gray-200 rounded-lg p-8">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">Venue</h2>
+            <div class="space-y-3">
+              <% if @event.venue_name.present? %>
+                <div class="flex items-start">
+                  <svg class="w-5 h-5 mr-3 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                  </svg>
+                  <div>
+                    <h3 class="font-semibold text-gray-900"><%= @event.venue_name %></h3>
+                  </div>
+                </div>
+              <% end %>
+              
+              <% if @event.venue_address.present? %>
+                <div class="flex items-start">
+                  <svg class="w-5 h-5 mr-3 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <div>
+                    <p class="text-gray-700"><%= simple_format(@event.venue_address) %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Event Details Card -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+          <h3 class="text-xl font-semibold text-gray-900 mb-6">Event Details</h3>
+          
+          <div class="space-y-6">
+            <!-- Date & Time -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Date & Time</h4>
+              <div class="text-gray-900">
+                <div class="font-medium">
+                  <%= @event.event_date.strftime("%A, %B %d, %Y") %>
+                </div>
+                <div class="text-sm text-gray-600">
+                  <%= @event.event_date.strftime("%l:%M %p") %>
+                  <% if @event.doors_open_at.present? %>
+                    (Doors open: <%= @event.doors_open_at.strftime("%l:%M %p") %>)
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Price</h4>
+              <div class="text-2xl font-bold text-gray-900">
+                <%= @event.formatted_price %>
+              </div>
+            </div>
+
+            <!-- Capacity & Availability -->
+            <% if @event.max_capacity.present? %>
+              <div>
+                <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Availability</h4>
+                <div class="space-y-2">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Capacity:</span>
+                    <span class="font-medium"><%= number_with_delimiter(@event.max_capacity) %></span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Sold:</span>
+                    <span class="font-medium"><%= number_with_delimiter(@event.tickets_sold_count) %></span>
+                  </div>
+                  <% if @event.available_tickets %>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">Available:</span>
+                      <span class="font-medium text-green-600"><%= number_with_delimiter(@event.available_tickets) %></span>
+                    </div>
+                  <% end %>
+                  
+                  <!-- Progress bar -->
+                  <div class="mt-3">
+                    <div class="bg-gray-200 rounded-full h-2">
+                      <div class="bg-blue-500 h-2 rounded-full" style="width: <%= (@event.tickets_sold_count.to_f / @event.max_capacity * 100).round(1) %>%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      <%= (@event.tickets_sold_count.to_f / @event.max_capacity * 100).round(1) %>% sold
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- CTA Button -->
+            <div class="pt-4">
+              <% if @event.sold_out? %>
+                <button disabled class="w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg cursor-not-allowed">
+                  Sold Out
+                </button>
+              <% else %>
+                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
+                  Get Tickets
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Organizer Card -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Organized by</h3>
+          <div class="space-y-3">
+            <div>
+              <h4 class="font-medium text-gray-900"><%= @event.organizer.company_name %></h4>
+              <p class="text-gray-600"><%= @event.organizer.name %></p>
+            </div>
+            
+            <% if @event.organizer.description.present? %>
+              <p class="text-sm text-gray-600">
+                <%= truncate(@event.organizer.description, length: 150) %>
+              </p>
+            <% end %>
+            
+            <div class="flex space-x-3 text-sm">
+              <% if @event.organizer.website.present? %>
+                <a href="<%= @event.organizer.website %>" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium">
+                  Website
+                </a>
+              <% end %>
+              <% if @event.organizer.email.present? %>
+                <a href="mailto:<%= @event.organizer.email %>" class="text-blue-600 hover:text-blue-800 font-medium">
+                  Contact
+                </a>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
