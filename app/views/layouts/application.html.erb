@@ -25,7 +25,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Mozilla+Text:wght@200..700&display=swap" rel="stylesheet">
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="flex flex-col min-h-screen">
+    <%= render "shared/navbar" %>
+    <%= render "shared/flash_messages" %>
+    <main class="flex-1">
+      <%= yield %>
+    </main>
+    <%= render "shared/footer" %>
   </body>
 </html>
