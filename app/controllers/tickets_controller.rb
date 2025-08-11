@@ -17,9 +17,8 @@ class TicketsController < ApplicationController
     ))
 
     if @ticket.save
-      # Update event ticket count
-      @event.increment(:tickets_sold_count, @ticket.quantity)
-      @event.save!
+      # Update event ticket count with real calculation
+      @event.refresh_sold_count!
       
       ticket_word = @ticket.quantity == 1 ? 'ticket' : 'tickets'
       flash[:notice] = "Successfully purchased #{@ticket.quantity} #{ticket_word} for #{@event.title}!"

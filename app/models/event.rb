@@ -56,11 +56,19 @@ class Event < ApplicationRecord
   end
   
   def sold_out?
-    max_capacity.present? && tickets_sold_count >= max_capacity
+    max_capacity.present? && actual_tickets_sold >= max_capacity
   end
   
   def available_tickets
     return nil unless max_capacity.present?
-    max_capacity - tickets_sold_count
+    max_capacity - actual_tickets_sold
+  end
+  
+  def actual_tickets_sold
+    tickets.confirmed.sum(:quantity)
+  end
+  
+  def refresh_sold_count!
+    update!(tickets_sold_count: actual_tickets_sold)
   end
 end
