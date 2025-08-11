@@ -6,3 +6,6 @@ import { application } from "./application";
 
 import FlashMessagesController from "./flash_messages_controller";
 application.register("flash-messages", FlashMessagesController);
+
+import TicketPurchaseController from "./ticket_purchase_controller";
+application.register("ticket-purchase", TicketPurchaseController);
