@@ -10,9 +10,11 @@
       <li>
         <%= link_to "Events", events_path, class: "text-gray-700 hover:text-blue-600 transition duration-200" %>
       </li>
-      <li>
-        <a href="/tickets" class="text-gray-700 hover:text-blue-600 transition duration-200">Tickets</a>
-      </li>
+      <% if authenticated? %>
+        <li>
+          <%= link_to "My Tickets", tickets_path, class: "text-gray-700 hover:text-blue-600 transition duration-200" %>
+        </li>
+      <% end %>
       
       <% if authenticated? %>
         <li>

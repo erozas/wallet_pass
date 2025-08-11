@@ -3,7 +3,14 @@ Rails.application.routes.draw do
   resource :session
   resource :registration, only: [:new, :create]
   resources :passwords, param: :token
-  resources :events, only: [:index, :show]
+  resources :events, only: [:index, :show] do
+    resources :tickets, only: [:create]
+  end
+  resources :tickets, only: [:index, :show] do
+    member do
+      get :download_pass
+    end
+  end
   mount Passkit::Engine => "/passkit", as: "passkit"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

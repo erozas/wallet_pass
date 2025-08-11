@@ -39,6 +39,7 @@ class Event < ApplicationRecord
 
   belongs_to :organizer
   has_one_attached :cover
+  has_many :tickets, dependent: :destroy
   
   validates :title, presence: true
   validates :event_date, presence: true

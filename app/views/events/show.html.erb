@@ -198,16 +198,64 @@
               </div>
             <% end %>
 
-            <!-- CTA Button -->
+            <!-- Ticket Purchase -->
             <div class="pt-4">
               <% if @event.sold_out? %>
                 <button disabled class="w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg cursor-not-allowed">
                   Sold Out
                 </button>
+              <% elsif authenticated? %>
+                <%= form_with model: [@event, @event.tickets.build], 
+                    local: true, 
+                    data: { 
+                      controller: "ticket-purchase",
+                      ticket_purchase_ticket_price_value: @event.ticket_price_cents || 0,
+                      ticket_purchase_max_capacity_value: @event.max_capacity || 999999,
+                      ticket_purchase_tickets_sold_value: @event.tickets_sold_count
+                    },
+                    class: "space-y-4" do |form| %>
+                  
+                  <!-- Quantity Selector -->
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-700">Quantity:</span>
+                    <div class="flex items-center space-x-3">
+                      <button type="button" 
+                              data-action="click->ticket-purchase#decrement"
+                              class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                        -
+                      </button>
+                      <%= form.number_field :quantity, 
+                          value: 1, 
+                          min: 1, 
+                          max: 10,
+                          data: { 
+                            ticket_purchase_target: "quantity",
+                            action: "input->ticket-purchase#quantityChanged"
+                          },
+                          class: "w-16 text-center border border-gray-300 rounded-md py-1" %>
+                      <button type="button" 
+                              data-action="click->ticket-purchase#increment"
+                              class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Total Price Display -->
+                  <div class="text-center py-2">
+                    <div class="text-lg font-semibold text-gray-900">
+                      Total: <span data-ticket-purchase-target="totalPrice">$0.00</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Submit Button -->
+                  <%= form.submit "Get 1 Ticket", 
+                      data: { ticket_purchase_target: "submitButton" },
+                      class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200" %>
+                <% end %>
               <% else %>
-                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
-                  Get Tickets
-                </button>
+                <%= link_to "Sign In to Get Tickets", new_session_path, 
+                    class: "block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center" %>
               <% end %>
             </div>
           </div>
