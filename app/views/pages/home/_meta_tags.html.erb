@@ -1,0 +1,59 @@
+<% content_for :title, "PassPort - Find Amazing Events & Get Apple Wallet Tickets" %>
+<% content_for :description, "Discover concerts, workshops, conferences and more happening near you. Get your tickets instantly delivered to Apple Wallet. Professional event platform with digital ticketing." %>
+<% content_for :keywords, "events near me, concerts, workshops, conferences, digital tickets, Apple Wallet tickets, event discovery, live events, music festivals, networking events" %>
+<% content_for :og_type, "website" %>
+
+<% content_for :structured_data do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "PassPort Events",
+    "url": "<%= request.base_url %>",
+    "description": "Find amazing events and get Apple Wallet tickets instantly",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "<%= request.base_url %>/events?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "sameAs": [
+      "https://twitter.com/passportevents",
+      "https://facebook.com/passportevents"
+    ]
+  }
+  </script>
+
+  <% if @featured_events.any? %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Featured Events",
+      "description": "Trending events happening near you",
+      "itemListElement": [
+        <% @featured_events.each_with_index do |event, index| %>
+          {
+            "@type": "ListItem",
+            "position": <%= index + 1 %>,
+            "item": {
+              "@type": "Event",
+              "name": "<%= j event.title %>",
+              "description": "<%= j truncate(event.description, length: 160) if event.description.present? %>",
+              "startDate": "<%= event.event_date.iso8601 %>",
+              "location": {
+                "@type": "Place",
+                "name": "<%= j event.venue_name %>"<%= ", \"address\": \"#{j event.venue_address}\"" if event.venue_address.present? %>
+              },
+              "organizer": {
+                "@type": "Organization",
+                "name": "<%= j event.organizer.company_name %>"
+              },
+              "url": "<%= event_url(event) %>"<%= event.ticket_price_cents.present? ? ", \"offers\": { \"@type\": \"Offer\", \"price\": \"#{event.ticket_price_cents / 100.0}\", \"priceCurrency\": \"USD\" }" : "" %>
+            }
+          }<%= "," unless index == @featured_events.length - 1 %>
+        <% end %>
+      ]
+    }
+    </script>
+  <% end %>
+<% end %>

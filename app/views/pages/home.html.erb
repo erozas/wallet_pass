@@ -1,67 +1,9 @@
-<% content_for :title, "PassPort - Find Amazing Events & Get Apple Wallet Tickets" %>
-<% content_for :description, "Discover concerts, workshops, conferences and more happening near you. Get your tickets instantly delivered to Apple Wallet. Professional event platform with digital ticketing." %>
-<% content_for :keywords, "events near me, concerts, workshops, conferences, digital tickets, Apple Wallet tickets, event discovery, live events, music festivals, networking events" %>
-<% content_for :og_type, "website" %>
-
-<% content_for :structured_data do %>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "PassPort Events",
-    "url": "<%= request.base_url %>",
-    "description": "Find amazing events and get Apple Wallet tickets instantly",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "<%= request.base_url %>/events?search={search_term_string}",
-      "query-input": "required name=search_term_string"
-    },
-    "sameAs": [
-      "https://twitter.com/passportevents",
-      "https://facebook.com/passportevents"
-    ]
-  }
-  </script>
-
-  <% if @featured_events.any? %>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Featured Events",
-      "description": "Trending events happening near you",
-      "itemListElement": [
-        <% @featured_events.each_with_index do |event, index| %>
-          {
-            "@type": "ListItem",
-            "position": <%= index + 1 %>,
-            "item": {
-              "@type": "Event",
-              "name": "<%= j event.title %>",
-              "description": "<%= j truncate(event.description, length: 160) if event.description.present? %>",
-              "startDate": "<%= event.event_date.iso8601 %>",
-              "location": {
-                "@type": "Place",
-                "name": "<%= j event.venue_name %>"<%= ", \"address\": \"#{j event.venue_address}\"" if event.venue_address.present? %>
-              },
-              "organizer": {
-                "@type": "Organization",
-                "name": "<%= j event.organizer.company_name %>"
-              },
-              "url": "<%= event_url(event) %>"<%= event.ticket_price_cents.present? ? ", \"offers\": { \"@type\": \"Offer\", \"price\": \"#{event.ticket_price_cents / 100.0}\", \"priceCurrency\": \"USD\" }" : "" %>
-            }
-          }<%= "," unless index == @featured_events.length - 1 %>
-        <% end %>
-      ]
-    }
-    </script>
-  <% end %>
-<% end %>
+<%= render "pages/home/meta_tags" %>
 
 <!-- Hero Section -->
 <section class="relative py-12">
   <!-- Full Opacity Background Image -->
-  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1496024840928-4c417adf211d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
   <!-- Dark gradient overlay -->
   <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
   <!-- Additional color overlay -->
@@ -115,14 +57,14 @@
 </section>
 
 <!-- Featured Events Section -->
-<section class="bg-white py-20">
+<section class="bg-white py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Section Header -->
-    <div class="text-center mb-16">
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-1">
         Trending Events
       </h2>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
         Discover amazing events happening near you. From concerts to conferences, 
         find your next unforgettable experience.
       </p>
