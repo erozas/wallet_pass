@@ -138,19 +138,15 @@
         <!-- Actions -->
         <div class="mt-8 pt-6 border-t border-gray-200">
           <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1 bg-black hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg text-center transition-colors duration-200 flex items-center justify-center">
-              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-              </svg>
+            <a href="<%= @ticket.passkit_url_ios %>", class="flex-1 bg-black hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg text-center transition-colors duration-200 flex items-center justify-center">
+              <%= inline_svg_tag "apple_logo_white.svg", class: "w-5 h-5 mr-2" %>
               Add to Apple Wallet
-            </div>
-            
-            <% unless @ticket.checked_in? %>
-              <%= link_to "Check In", check_in_ticket_path(@ticket), 
-                  method: :patch,
-                  data: { confirm: "Are you sure you want to check in this ticket?" },
-                  class: "flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg text-center transition-colors duration-200" %>
-            <% end %>
+            </a>
+            <a href="<%= @ticket.android_wallet_url %>", class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg text-center transition-colors duration-200 flex items-center justify-center">
+              <%= inline_svg_tag "android.svg", class: "w-6 h-6 mr-2" %>
+              Add to Android Wallet
+            </a>
+
             
             <%= link_to "View Event Details", event_path(@ticket.event), 
                 class: "flex-1 border border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg text-center transition-colors duration-200" %>
