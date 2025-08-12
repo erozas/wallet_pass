@@ -1,3 +1,3 @@
 Passkit.configure do |config|
-  # config.available_passes['Passkit::YourPass'] = -> { User.create }
+  config.available_passes['Passkit::EventTicket'] = -> { Ticket.last }
 end
