@@ -3,8 +3,11 @@
 # Table name: tickets
 #
 #  id            :integer          not null, primary key
+#  checked_in_at :datetime
 #  purchased_at  :datetime
 #  quantity      :integer
+#  seat          :string
+#  section       :string
 #  status        :integer          default("pending")
 #  ticket_number :string
 #  uuid          :string

@@ -10,6 +10,8 @@
 #  doors_open_at      :datetime
 #  event_date         :datetime
 #  max_capacity       :integer
+#  seats_per_section  :integer          default(50)
+#  sections           :text
 #  slug               :string
 #  status             :string
 #  ticket_price_cents :integer

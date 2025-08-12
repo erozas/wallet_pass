@@ -8,6 +8,8 @@
 #  doors_open_at      :datetime
 #  event_date         :datetime
 #  max_capacity       :integer
+#  seats_per_section  :integer          default(50)
+#  sections           :text
 #  slug               :string
 #  status             :string
 #  ticket_price_cents :integer
@@ -56,12 +58,24 @@ class Event < ApplicationRecord
   end
   
   def sold_out?
-    max_capacity.present? && actual_tickets_sold >= max_capacity
+    return false unless max_capacity.present?
+    
+    # Check both max_capacity and actual seating availability
+    capacity_sold_out = actual_tickets_sold >= max_capacity
+    seating_sold_out = !has_available_seats?(1)
+    
+    capacity_sold_out || seating_sold_out
   end
   
   def available_tickets
     return nil unless max_capacity.present?
-    max_capacity - actual_tickets_sold
+    
+    # Calculate based on both capacity and available seats
+    capacity_remaining = max_capacity - actual_tickets_sold
+    total_seats = section_list.count * seats_per_section
+    seats_remaining = total_seats - actual_tickets_sold
+    
+    [capacity_remaining, seats_remaining].min
   end
   
   def actual_tickets_sold
@@ -70,5 +84,40 @@ class Event < ApplicationRecord
   
   def refresh_sold_count!
     update!(tickets_sold_count: actual_tickets_sold)
+  end
+  
+  def section_list
+    return ['A', 'B', 'C'] if sections.blank?
+    YAML.safe_load(sections) rescue ['A', 'B', 'C']
+  end
+  
+  def assign_seats_for_quantity(quantity)
+    assigned_seats = []
+    
+    section_list.each do |section|
+      break if assigned_seats.count >= quantity
+      
+      # Get all taken seats in this section
+      taken_seats = tickets.confirmed
+                          .where(section: section)
+                          .pluck(:seat)
+                          .map(&:to_i)
+                          .sort
+      
+      # Find available seats in this section
+      (1..seats_per_section).each do |seat_num|
+        break if assigned_seats.count >= quantity
+        
+        unless taken_seats.include?(seat_num)
+          assigned_seats << { section: section, seat: seat_num.to_s }
+        end
+      end
+    end
+    
+    assigned_seats.take(quantity)
+  end
+  
+  def has_available_seats?(quantity)
+    assign_seats_for_quantity(quantity).count == quantity
   end
 end

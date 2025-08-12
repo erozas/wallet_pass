@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :tickets, only: [:index, :show] do
     member do
       get :download_pass
+      patch :check_in
     end
   end
   mount Passkit::Engine => "/passkit", as: "passkit"

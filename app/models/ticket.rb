@@ -3,8 +3,11 @@
 # Table name: tickets
 #
 #  id            :integer          not null, primary key
+#  checked_in_at :datetime
 #  purchased_at  :datetime
 #  quantity      :integer
+#  seat          :string
+#  section       :string
 #  status        :integer          default("pending")
 #  ticket_number :string
 #  uuid          :string
@@ -32,6 +35,9 @@ class Ticket < ApplicationRecord
   validates :uuid, presence: true, uniqueness: true
   validates :status, presence: true
   validates :quantity, presence: true, numericality: { greater_than: 0 }
+  validates :section, presence: true
+  validates :seat, presence: true
+  validates :seat, uniqueness: { scope: [:event_id, :section], message: "has already been taken in this section" }
   
   enum :status, { pending: 0, confirmed: 1, used: 2, cancelled: 3 }
   
@@ -53,6 +59,19 @@ class Ticket < ApplicationRecord
   def formatted_total_price
     return "Free" if total_price == 0
     "$#{'%.2f' % total_price}"
+  end
+  
+  def checked_in?
+    checked_in_at.present?
+  end
+  
+  def check_in!
+    update!(checked_in_at: Time.current, status: :used)
+  end
+  
+  def seat_location
+    return nil if section.blank? || seat.blank?
+    "Section #{section}, Seat #{seat}"
   end
   
   private

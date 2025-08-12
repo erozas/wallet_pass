@@ -54,10 +54,22 @@
                       <span class="text-gray-500">Quantity:</span>
                       <span class="font-medium text-gray-900"><%= ticket.quantity %></span>
                     </div>
+                    <% if ticket.seat_location.present? %>
+                      <div>
+                        <span class="text-gray-500">Seat:</span>
+                        <span class="font-medium text-gray-900"><%= ticket.seat_location %></span>
+                      </div>
+                    <% end %>
                     <div>
                       <span class="text-gray-500">Total:</span>
                       <span class="font-medium text-gray-900"><%= ticket.formatted_total_price %></span>
                     </div>
+                    <% if ticket.checked_in? %>
+                      <div>
+                        <span class="text-gray-500">Status:</span>
+                        <span class="font-medium text-green-600">✓ Checked In</span>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
                 

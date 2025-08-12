@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_072657) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_002536) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -57,6 +57,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_072657) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
+    t.text "sections"
+    t.integer "seats_per_section", default: 50
     t.index ["event_date"], name: "index_events_on_event_date"
     t.index ["organizer_id"], name: "index_events_on_organizer_id"
     t.index ["slug"], name: "index_events_on_slug", unique: true
@@ -141,6 +143,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_072657) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
+    t.string "section"
+    t.string "seat"
+    t.datetime "checked_in_at"
     t.index ["event_id"], name: "index_tickets_on_event_id"
     t.index ["user_id"], name: "index_tickets_on_user_id"
     t.index ["uuid"], name: "index_tickets_on_uuid", unique: true

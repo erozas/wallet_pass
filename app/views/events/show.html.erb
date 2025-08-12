@@ -1,53 +1,4 @@
-<% content_for :title, "#{@event.title} - #{@event.event_date.strftime('%B %d, %Y')} | PassPort" %>
-<% content_for :description, "#{@event.description.present? ? truncate(@event.description, length: 160) : "Join us for #{@event.title} on #{@event.event_date.strftime('%B %d, %Y')}"} Get your Apple Wallet tickets instantly." %>
-<% content_for :keywords, "#{@event.title}, #{@event.category} event, #{@event.venue_name}, #{@event.event_date.strftime('%B %Y')} events, Apple Wallet tickets, #{@event.organizer.company_name}" %>
-
-<% content_for :og_title, "#{@event.title} - #{@event.event_date.strftime('%B %d, %Y')}" %>
-<% content_for :og_description, @event.description.present? ? truncate(@event.description, length: 160) : "Join us for #{@event.title}. Get your Apple Wallet tickets instantly." %>
-<% content_for :og_type, "event" %>
-<% if @event.cover.attached? %>
-  <% content_for :og_image, url_for(@event.cover) %>
-<% end %>
-
-<% content_for :structured_data do %>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Event",
-    "name": "<%= j @event.title %>",
-    "description": "<%= j @event.description if @event.description.present? %>",
-    "startDate": "<%= @event.event_date.iso8601 %>",
-    "endDate": "<%= (@event.event_date + 3.hours).iso8601 %>",
-    "eventStatus": "https://schema.org/EventScheduled",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "location": {
-      "@type": "Place",
-      "name": "<%= j @event.venue_name %>"<%= ", \"address\": \"#{j @event.venue_address}\"" if @event.venue_address.present? %>
-    },
-    "organizer": {
-      "@type": "Organization",
-      "name": "<%= j @event.organizer.company_name %>"<%= ", \"description\": \"#{j @event.organizer.description}\"" if @event.organizer.description.present? %>
-    },
-    "url": "<%= event_url(@event) %>",
-    <% if @event.cover.attached? %>
-    "image": "<%= url_for(@event.cover) %>",
-    <% end %>
-    <% if @event.ticket_price_cents.present? %>
-    "offers": {
-      "@type": "Offer",
-      "price": "<%= @event.ticket_price_cents / 100.0 %>",
-      "priceCurrency": "USD",
-      "availability": "<%= @event.sold_out? ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' %>",
-      "url": "<%= event_url(@event) %>"
-    },
-    <% end %>
-    "performer": {
-      "@type": "Organization",
-      "name": "<%= j @event.organizer.company_name %>"
-    }
-  }
-  </script>
-<% end %>
+<%= render "meta_tags" %>
 
 <div class="bg-gray-50 min-h-screen">
   <!-- Hero Section with Cover Image -->
@@ -60,7 +11,7 @@
       </div>
     <% end %>
     <div class="relative bg-gradient-to-t from-gray-900/80 to-transparent">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div class="max-w-3xl">
           <!-- Category Badge -->
           <div class="mb-4">
@@ -112,7 +63,7 @@
 
   <!-- Breadcrumbs -->
   <div class="bg-white border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
           <% breadcrumbs.each_with_index do |breadcrumb, index| %>
@@ -137,12 +88,12 @@
   </div>
 
   <!-- Main Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <!-- Main Content Area -->
       <div class="lg:col-span-2">
         <!-- Description -->
-        <div class="bg-white border border-gray-200 rounded-lg p-8 mb-8">
+        <div class="bg-white border border-gray-200 rounded-lg py-4 px-6 mb-4">
           <h2 class="text-2xl font-semibold text-gray-900 mb-4">About This Event</h2>
           <% if @event.description.present? %>
             <div class="prose prose-gray max-w-none">
@@ -155,7 +106,7 @@
 
         <!-- Venue Information -->
         <% if @event.venue_name.present? || @event.venue_address.present? %>
-          <div class="bg-white border border-gray-200 rounded-lg p-8">
+          <div class="bg-white border border-gray-200 rounded-lg py-4 px-6">
             <h2 class="text-2xl font-semibold text-gray-900 mb-4">Venue</h2>
             <div class="space-y-3">
               <% if @event.venue_name.present? %>
@@ -188,13 +139,13 @@
       <!-- Sidebar -->
       <div class="lg:col-span-1">
         <!-- Event Details Card -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-          <h3 class="text-xl font-semibold text-gray-900 mb-6">Event Details</h3>
+        <div class="bg-white border border-gray-200 rounded-lg px-6 py-4 mb-8">
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Event Details</h3>
           
-          <div class="space-y-6">
+          <div class="space-y-4">
             <!-- Date & Time -->
             <div>
-              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Date & Time</h4>
+              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Date & Time</h4>
               <div class="text-gray-900">
                 <div class="font-medium">
                   <%= @event.event_date.strftime("%A, %B %d, %Y") %>
@@ -210,47 +161,14 @@
 
             <!-- Price -->
             <div>
-              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Price</h4>
+              <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Price</h4>
               <div class="text-2xl font-bold text-gray-900">
                 <%= @event.formatted_price %>
               </div>
             </div>
 
-            <!-- Capacity & Availability -->
-            <% if @event.max_capacity.present? %>
-              <div>
-                <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Availability</h4>
-                <div class="space-y-2">
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Capacity:</span>
-                    <span class="font-medium"><%= number_with_delimiter(@event.max_capacity) %></span>
-                  </div>
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Sold:</span>
-                    <span class="font-medium"><%= number_with_delimiter(@event.actual_tickets_sold) %></span>
-                  </div>
-                  <% if @event.available_tickets %>
-                    <div class="flex justify-between text-sm">
-                      <span class="text-gray-600">Available:</span>
-                      <span class="font-medium text-green-600"><%= number_with_delimiter(@event.available_tickets) %></span>
-                    </div>
-                  <% end %>
-                  
-                  <!-- Progress bar -->
-                  <div class="mt-3">
-                    <div class="bg-gray-200 rounded-full h-2">
-                      <div class="bg-blue-500 h-2 rounded-full" style="width: <%= (@event.actual_tickets_sold.to_f / @event.max_capacity * 100).round(1) %>%"></div>
-                    </div>
-                    <div class="text-xs text-gray-500 mt-1">
-                      <%= (@event.actual_tickets_sold.to_f / @event.max_capacity * 100).round(1) %>% sold
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-
             <!-- Ticket Purchase -->
-            <div class="pt-4">
+            <div class="">
               <% if @event.sold_out? %>
                 <button disabled class="w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg cursor-not-allowed">
                   Sold Out
@@ -264,11 +182,11 @@
                       ticket_purchase_max_capacity_value: @event.max_capacity || 999999,
                       ticket_purchase_tickets_sold_value: @event.actual_tickets_sold
                     },
-                    class: "space-y-4" do |form| %>
+                    class: "space-y-2" do |form| %>
                   
                   <!-- Quantity Selector -->
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700">Quantity:</span>
+                  <div class="flex flex-col my-3">
+                    <span class="text-sm mb-1 text-gray-700">Quantity:</span>
                     <div class="flex items-center space-x-3">
                       <button type="button" 
                               data-action="click->ticket-purchase#decrement"
@@ -293,7 +211,7 @@
                   </div>
                   
                   <!-- Total Price Display -->
-                  <div class="text-center py-2">
+                  <div class="py-2">
                     <div class="text-lg font-semibold text-gray-900">
                       Total: <span data-ticket-purchase-target="totalPrice">$0.00</span>
                     </div>
